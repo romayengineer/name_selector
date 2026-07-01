@@ -8,6 +8,8 @@
 
   let showRankings = $state(false);
 
+  const totalMatches = $derived(Math.floor($names.reduce((sum: number, name: Name) => sum + name.comparisons, 0) / 2));
+
   onMount(() => {
     names.initializeApp();
   });
@@ -25,7 +27,7 @@
 </script>
 
 <div class="space-y-8">
-  <Controls onGenerateMore={handleGenerateMore} totalNames={$names.length} />
+  <Controls onGenerateMore={handleGenerateMore} totalNames={$names.length} totalMatches={totalMatches} />
 
   <div class="flex gap-4 justify-center">
     <button

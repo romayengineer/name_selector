@@ -2,9 +2,10 @@
   interface Props {
     onGenerateMore: () => void;
     totalNames?: number;
+    totalMatches?: number;
   }
 
-  const { onGenerateMore, totalNames = 0 }: Props = $props();
+  const { onGenerateMore, totalNames = 0, totalMatches = 0 }: Props = $props();
 
   let isGenerating = $state(false);
 
@@ -16,8 +17,13 @@
 </script>
 
 <div class="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white rounded-lg shadow-md p-6">
-  <div class="text-sm text-slate-600">
-    Total names generated: <span class="font-semibold text-slate-900">{totalNames}</span>
+  <div class="flex gap-6 text-sm text-slate-600">
+    <div>
+      Total names generated: <span class="font-semibold text-slate-900">{totalNames}</span>
+    </div>
+    <div>
+      Total matches: <span class="font-semibold text-slate-900">{totalMatches}</span>
+    </div>
   </div>
 
   <button

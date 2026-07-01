@@ -9,29 +9,35 @@ Name Selector generates phonetically diverse business names by combining consona
 ## Features
 
 - **Smart Name Generation**: Creates unique names by combining consonants and vowels
-  - 3-5 syllables per name
+  - Configurable syllables (default: 3-5 per name)
   - Prevents duplicates with set-based tracking
-  - Generate batches of 100 names on demand
+  - Generate batches of names on demand
   
-- **Interactive Comparison**: Multiple input methods
-  - Click names to vote
-  - Arrow keys for keyboard navigation
-  - Swipe gestures for mobile devices
+- **Interactive Comparison**: Click to compare and vote
+  - Two random names appear at a time
+  - Click to select your preferred name
+  - See results immediately reflected in rankings
   
-- **ELO-based Ranking**: Names are ranked using an ELO rating system
+- **ELO-based Ranking**: Names ranked by preference using ELO rating system
   - Ratings adjust after each comparison
-  - Top names surface naturally over time
+  - Top-rated names surface naturally over time
+  - Win rate calculation for each name
+  
+- **Live Statistics**: Track your engagement
+  - Total names generated
+  - Total matches (number of selections/clicks made)
   
 - **Persistent Storage**: All data stored in browser localStorage
   - Generated names
   - ELO ratings
   - Comparison history
   
-- **Ranking Table**: View all names with their current stats
-  - Name
+- **Ranking Table**: View all names with detailed stats
+  - Rank and name
   - ELO rating
-  - Win count
-  - Total comparisons
+  - Win/loss record
+  - Win rate percentage
+  - Total matches (comparisons) for each name
 
 ## Tech Stack
 
@@ -133,7 +139,7 @@ Where:
 
 ## Data Schema
 
-### Generated Names
+### Generated Names (localStorage format)
 ```json
 {
   "names": [
@@ -150,6 +156,16 @@ Where:
   "generatedNameSet": ["ketalo", "midale", "porina"]
 }
 ```
+
+**Field Definitions:**
+- `id`: Unique identifier (UUID v4)
+- `text`: The generated name
+- `eloRating`: Current ELO rating (higher = more preferred)
+- `wins`: Number of times this name won in comparisons
+- `losses`: Number of times this name lost in comparisons
+- `comparisons`: Total number of times this name appeared in a comparison
+- `createdAt`: ISO 8601 timestamp of when name was generated
+- `generatedNameSet`: Array of all generated name strings (for deduplication)
 
 ## Development Roadmap
 
@@ -222,14 +238,28 @@ npm run preview
 
 ## How to Use
 
-1. **Generate Names**: Start with 100 auto-generated names
-2. **Compare**: Two random names appear; click the one you prefer
-3. **Watch Rankings**: Use the ranking table to see your top names emerge
-4. **Generate More**: Hit "Generate 100 More" to expand the pool and compare further
-5. **Export**: (Phase 3) Download your top-rated names as JSON/CSV
+1. **Start**: App auto-generates initial batch of unique names
+2. **Compare**: Two random names appear side-by-side; click the one you prefer
+3. **Track Progress**: See real-time statistics:
+   - **Total names generated**: How many unique names created so far
+   - **Total matches**: How many selections/clicks you've made
+4. **View Rankings**: Switch to Rankings tab to see names sorted by ELO rating
+5. **Generate More**: Hit "Generate More Names" to expand the pool
+6. **Repeat**: Keep comparing to find your favorite names
+
+The more you compare, the more accurate the rankings become. Popular names rise to the top!
+
+## Statistics Explained
+
+- **ELO Rating**: A number representing the name's "strength" based on wins/losses. Higher = more preferred.
+- **Wins/Losses**: How many times this name won/lost in direct comparisons.
+- **Win Rate**: Percentage of matches won (wins ÷ total matches).
+- **Matches**: How many times this name appeared in a comparison.
+- **Total Matches**: The sum of all your selections/clicks across all names.
 
 ## Notes
 
 - All data is stored in browser localStorage; clearing browser data will reset the app
-- ELO rating K-factor is fixed at 32 (can be made configurable later)
-- Initial rating is 1200 for all newly generated names
+- ELO rating K-factor is fixed at 32 (configurable in Phase 3)
+- Initial ELO rating is 1200 for all newly generated names
+- Total matches = sum of all name comparisons ÷ 2 (since each match involves two names)
