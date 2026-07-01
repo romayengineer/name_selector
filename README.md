@@ -35,11 +35,20 @@ Name Selector generates phonetically diverse business names by combining consona
 
 ## Tech Stack
 
-- **Frontend Framework**: SvelteKit with Svelte
-- **Language**: TypeScript (strict mode, no JavaScript)
-- **Styling**: Tailwind CSS (or vanilla CSS)
+- **Frontend Framework**: SvelteKit 2.61+ with Svelte 5.55+
+- **Language**: TypeScript 5.6+ (strict mode, no JavaScript)
+- **Styling**: Tailwind CSS 3.4
+- **Build Tool**: Vite 5.0+
 - **Storage**: Browser localStorage
+- **UUID Generation**: uuid 9.0+
 - **Data Format**: JSON
+
+## Node.js & Dependencies
+
+- **Node.js**: 18.19.1+ (tested with v18)
+- **npm**: 9.2.0+
+- Vite v5 is compatible with Node 18.19+
+- All dependencies aligned with gocommerce project patterns
 
 ## Project Structure
 
@@ -125,13 +134,14 @@ Where:
 
 ## Development Roadmap
 
-### Phase 1: MVP
-- [ ] Initialize SvelteKit project
-- [ ] Implement name generation service
-- [ ] Implement ELO ranking service
-- [ ] Implement localStorage persistence
-- [ ] Build comparison UI (click-based)
-- [ ] Build ranking table view
+### Phase 1: MVP ✅ Complete
+- [x] Initialize SvelteKit project with Svelte 5
+- [x] Implement name generation service
+- [x] Implement ELO ranking service
+- [x] Implement localStorage persistence
+- [x] Build comparison UI (click-based)
+- [x] Build ranking table view
+- [x] Build generation controls
 
 ### Phase 2: Input Methods
 - [ ] Add keyboard navigation (arrow keys)
@@ -153,28 +163,36 @@ Where:
 - No `any` types unless absolutely unavoidable
 - Configure SvelteKit to enforce TypeScript
 
-### Svelte Best Practices
+### Svelte 5 Best Practices
 - Use `<script lang="ts">` in all `.svelte` files
-- Use reactive variables (`let`, `$:`) for state management
-- Prefer Svelte stores over prop drilling for shared state
+- Use `$state()` rune for reactive state
+- Use `$derived()` rune for derived values
+- Use `$props()` rune with interface-based Props for component props
+- Use `onclick` attribute instead of deprecated `on:click`
+- Prefer Svelte stores for shared state
 - Keep components focused and single-responsibility
 
 ## Getting Started
 
 ```bash
-# Clone the repository
-git clone <repo-url>
-cd name_selector
-
 # Install dependencies
 npm install
 
-# Start development server
+# Start development server (http://localhost:5173)
 npm run dev
 
 # Build for production
 npm run build
+
+# Preview production build locally
+npm run preview
 ```
+
+### Development Server Features
+- Hot module reloading (HMR)
+- Access at `http://localhost:5173`
+- TypeScript strict mode enabled
+- Tailwind CSS preprocessed on-the-fly
 
 ## How to Use
 
