@@ -1,8 +1,10 @@
 import { writable, derived } from 'svelte/store';
 import type { Name } from '$lib/types/index';
-import { generateNames, getRandomNames } from '$lib/services/nameGenerator';
+import { NameGenerator } from '$lib/services/nameGenerator';
 import { recordComparison, rankNames } from '$lib/services/eloRanking';
 import { loadData, saveData } from '$lib/services/storage';
+
+const nameGenerator = new NameGenerator();
 
 function createAppState() {
   const { subscribe, set, update } = writable<Name[]>([]);
@@ -12,7 +14,7 @@ function createAppState() {
     const { names, generatedNameSet: nameSet } = loadData();
 
     if (names.length === 0) {
-      const newNames = generateNames(100, nameSet);
+      const newNames = nameGenerator.generateNames(100, nameSet);
       set(newNames);
       generatedNameSet.set(nameSet);
       saveData(newNames, nameSet);
@@ -29,7 +31,7 @@ function createAppState() {
         currentNameSet = s;
       })();
 
-      const newNames = generateNames(100, currentNameSet);
+      const newNames = nameGenerator.generateNames(100, currentNameSet);
       const allNames = [...names, ...newNames];
       generatedNameSet.set(currentNameSet);
       saveData(allNames, currentNameSet);
@@ -69,7 +71,7 @@ export const names = createAppState();
 
 export const currentComparison = derived(names, (n: Name[]) => {
   if (n.length < 2) return null;
-  const pair = getRandomNames(n, 2);
+  const pair = nameGenerator.getRandomNames(n, 2);
   return pair as [Name, Name];
 });
 

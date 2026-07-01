@@ -58,11 +58,10 @@ name_selector/
 ├── src/
 │   ├── routes/
 │   │   ├── +page.svelte              # Main comparison view
-│   │   ├── +page.server.ts           # Server logic (if needed)
 │   │   └── +layout.svelte            # Layout wrapper
 │   ├── lib/
 │   │   ├── services/
-│   │   │   ├── nameGenerator.ts       # Syllable-based name generation
+│   │   │   ├── nameGenerator.ts       # Class-based name generation (configurable)
 │   │   │   ├── eloRanking.ts          # ELO rating calculations
 │   │   │   └── storage.ts             # localStorage management
 │   │   ├── components/
@@ -74,13 +73,18 @@ name_selector/
 │   │   └── types/
 │   │       └── index.ts               # TypeScript definitions
 │   └── app.css                        # Global styles
-├── static/
-└── package.json
+├── package.json
+├── svelte.config.js
+├── vite.config.js
+├── tailwind.config.js
+└── postcss.config.js
 ```
 
 ## Core Algorithms
 
 ### Name Generation
+
+**Architecture**: `NameGenerator` is a configurable class that generates phonetic names.
 
 **Syllable Structure**: Each syllable is a consonant + vowel combination.
 
@@ -89,6 +93,21 @@ Consonants: b, c, d, f, g, h, j, k, l, m, n, p, r, s, t, v, w, x, y, z
 Vowels: a, e, i, o, u
 
 Name = [Syllable₁][Syllable₂][Syllable₃...] where 3 ≤ count ≤ 5
+```
+
+**Configuration** (via constructor):
+```typescript
+const generator = new NameGenerator({
+  consonants: ['b', 'c', 'd', ...],     // Custom consonants (optional)
+  vowels: ['a', 'e', 'i', ...],         // Custom vowels (optional)
+  minSyllables: 3,                       // Minimum syllables per name (default: 3)
+  maxSyllables: 5,                       // Maximum syllables per name (default: 5)
+  initialEloRating: 1200                 // Starting ELO rating (default: 1200)
+});
+
+// Usage
+const names = generator.generateNames(100, existingNamesSet);
+const pair = generator.getRandomNames(names, 2);
 ```
 
 **Uniqueness**: Generated names are tracked in a `Set<string>` to prevent duplicates.
@@ -171,6 +190,13 @@ Where:
 - Use `onclick` attribute instead of deprecated `on:click`
 - Prefer Svelte stores for shared state
 - Keep components focused and single-responsibility
+
+### Architecture Patterns
+- Use **classes** for services with stateful behavior and configuration (e.g., `NameGenerator`)
+- Keep services **immutable-by-default**: return new instances rather than mutating state
+- Use **TypeScript interfaces** for all configuration objects and type definitions
+- Export **single instances** from module level when appropriate (e.g., `const nameGenerator = new NameGenerator()`)
+- Use **private methods** for internal logic; expose only public methods
 
 ## Getting Started
 
