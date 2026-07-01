@@ -6,6 +6,10 @@ A web application that generates unique business names using syllable combinatio
 
 Name Selector generates phonetically diverse business names by combining consonants and vowels into 3-5 syllable words. You compare names two at a time, and the app ranks them using an ELO rating system to surface your top-rated names over time.
 
+## Screenshots
+
+![Name Selector comparison view showing two names side-by-side with ELO ratings and live statistics](./docs/screenshot.webp)
+
 ## Features
 
 - **Smart Name Generation**: Creates unique names by combining consonants and vowels
