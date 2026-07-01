@@ -4,7 +4,8 @@
       "Bash(npm create *)",
       "Bash(npx sv *)",
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(npm uninstall *)"
     ]
   }
 }
