@@ -4,7 +4,12 @@ import { NameGenerator } from '$lib/services/nameGenerator';
 import { recordComparison, rankNames } from '$lib/services/eloRanking';
 import { loadData, saveData } from '$lib/services/storage';
 
-const nameGenerator = new NameGenerator();
+const newNamesCounter = 20
+
+const nameGenerator = new NameGenerator({
+  minSyllables: 3,
+  maxSyllables: 3,
+});
 
 function createAppState() {
   const { subscribe, set, update } = writable<Name[]>([]);
@@ -14,7 +19,7 @@ function createAppState() {
     const { names, generatedNameSet: nameSet } = loadData();
 
     if (names.length === 0) {
-      const newNames = nameGenerator.generateNames(100, nameSet);
+      const newNames = nameGenerator.generateNames(newNamesCounter, nameSet);
       set(newNames);
       generatedNameSet.set(nameSet);
       saveData(newNames, nameSet);
@@ -31,7 +36,7 @@ function createAppState() {
         currentNameSet = s;
       })();
 
-      const newNames = nameGenerator.generateNames(100, currentNameSet);
+      const newNames = nameGenerator.generateNames(newNamesCounter, currentNameSet);
       const allNames = [...names, ...newNames];
       generatedNameSet.set(currentNameSet);
       saveData(allNames, currentNameSet);

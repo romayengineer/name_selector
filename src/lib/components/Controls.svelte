@@ -25,6 +25,6 @@
     disabled={isGenerating}
     class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-slate-400 transition-colors"
   >
-    {isGenerating ? 'Generating...' : 'Generate 100 More'}
+    {isGenerating ? 'Generating...' : 'Generate More Names'}
   </button>
 </div>
