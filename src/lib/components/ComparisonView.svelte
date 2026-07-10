@@ -8,7 +8,7 @@
 
   const { names, onSelect }: Props = $props();
 
-  let selectedIndex: number = $state(0);
+  let selectedIndex: number | null = $state(null);
 
   function getOtherNames(selected: Name): Name[] {
     const index = names.map(n => n.id).indexOf(selected.id);
@@ -19,10 +19,11 @@
 
   function handleKeydown(event: KeyboardEvent): void {
     if (event.key === 'ArrowLeft') {
-      selectedIndex -= 1;
+      selectedIndex = selectedIndex != null ? selectedIndex > 0 ? selectedIndex - 1 : names.length - 1 : 0;
     } else if (event.key === 'ArrowRight') {
-      selectedIndex += 1;
+      selectedIndex = selectedIndex != null ? (selectedIndex + 1) % names.length : 0;
     } else if (event.key === 'Enter') {
+      if (selectedIndex == null) return;
       const winner = names[selectedIndex % names.length];
       if (winner) {
         const losers = getOtherNames(winner);
@@ -30,7 +31,7 @@
           onSelect(winner, losers);
         }
       }
-      selectedIndex = 0;
+      selectedIndex = null;
     }
   }
 
