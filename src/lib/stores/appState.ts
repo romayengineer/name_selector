@@ -48,40 +48,18 @@ function createAppState() {
     });
   };
 
-  const recordWin = (winner: Name, loser: Name): void => {
+  const recordNWay = (winner: Name, losers: Name[]): void => {
     update((names: Name[]) => {
-      const [updatedWinner, updatedLoser] = eloRanking.recordComparison(winner, loser);
+      const results = eloRanking.recordNComparisons(winner, losers);
 
-      const updatedNames = names.map((n: Name) => {
-        if (n.id === updatedWinner.id) return updatedWinner;
-        if (n.id === updatedLoser.id) return updatedLoser;
-        return n;
-      });
+      let updatedNames: Name[] = [...names];
+      let updatedNamesIds: string[] = updatedNames.map(n => n.id);
 
-      let currentNameSet: Set<string> = new Set();
-      generatedNameSet.subscribe((s) => {
-        currentNameSet = s;
-      })();
-
-      saveData(updatedNames, currentNameSet);
-      return updatedNames;
-    });
-  };
-
-  const recordThreeWayWin = (winner: Name, loser1: Name, loser2: Name): void => {
-    update((names: Name[]) => {
-      const [updatedWinner, updatedLoser1, updatedLoser2] = eloRanking.recordThreeWayComparison(
-        winner,
-        loser1,
-        loser2
-      );
-
-      const updatedNames = names.map((n: Name) => {
-        if (n.id === updatedWinner.id) return updatedWinner;
-        if (n.id === updatedLoser1.id) return updatedLoser1;
-        if (n.id === updatedLoser2.id) return updatedLoser2;
-        return n;
-      });
+      results.forEach((updatedName) => {
+        const index = updatedNamesIds.indexOf(updatedName.id);
+        if (index < 0) return;
+        updatedNames[index] = updatedName;
+      })
 
       let currentNameSet: Set<string> = new Set();
       generatedNameSet.subscribe((s) => {
@@ -97,17 +75,15 @@ function createAppState() {
     subscribe,
     initializeApp,
     generateMoreNames,
-    recordWin,
-    recordThreeWayWin
+    recordNWay
   };
 }
 
 export const names = createAppState();
 
 export const currentComparison = derived(names, (n: Name[]) => {
-  if (n.length < 3) return null;
   const trio = nameGenerator.getRandomNames(n, 3);
-  return trio as [Name, Name, Name];
+  return trio as Name[];
 });
 
 export const rankings = derived(names, (n: Name[]) => {

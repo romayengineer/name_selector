@@ -8,14 +8,14 @@
 
   let showRankings = $state(false);
 
-  const totalMatches = $derived(Math.floor($names.reduce((sum: number, name: Name) => sum + name.comparisons, 0) / 4));
+  const totalMatches = $derived(Math.floor($names.reduce((sum: number, name: Name) => sum + name.wins, 0)));
 
   onMount(() => {
     names.initializeApp();
   });
 
-  function handleSelect(winner: Name, loser1: Name, loser2: Name): void {
-    names.recordThreeWayWin(winner, loser1, loser2);
+  function handleSelect(winner: Name, losers: Name[]): void {
+    names.recordNWay(winner, losers);
   }
 
   function handleGenerateMore(): void {
@@ -24,7 +24,14 @@
 </script>
 
 <div class="space-y-8">
-  <Controls onGenerateMore={handleGenerateMore} totalNames={$names.length} totalMatches={totalMatches} />
+  {#if showRankings}
+    <RankingTable rankings={$rankings} />
+  {:else}
+    <ComparisonView
+      names={$currentComparison}
+      onSelect={handleSelect}
+    />
+  {/if}
 
   <div class="flex gap-4 justify-center">
     <button
@@ -45,14 +52,5 @@
     </button>
   </div>
 
-  {#if showRankings}
-    <RankingTable rankings={$rankings} />
-  {:else}
-    <ComparisonView
-      name1={$currentComparison?.[0]}
-      name2={$currentComparison?.[1]}
-      name3={$currentComparison?.[2]}
-      onSelect={handleSelect}
-    />
-  {/if}
+  <Controls onGenerateMore={handleGenerateMore} totalNames={$names.length} totalMatches={totalMatches} />
 </div>

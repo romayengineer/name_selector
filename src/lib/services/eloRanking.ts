@@ -7,14 +7,17 @@ interface EloRankingConfig {
 export class EloRanking {
   private kFactor: number;
 
+  /** Creates an EloRanking instance with optional K-factor configuration. */
   constructor(config?: EloRankingConfig) {
     this.kFactor = config?.kFactor ?? 32;
   }
 
+  /** Calculates expected win probability for a name against an opponent using ELO formula. */
   private getExpectedScore(ratingA: number, ratingB: number): number {
     return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
   }
 
+  /** Updates a name's ELO rating based on comparison outcome against an opponent. */
   updateEloRating(name: Name, opponent: Name, won: boolean): EloResult {
     const expectedScore = this.getExpectedScore(name.eloRating, opponent.eloRating);
     const actual = won ? 1 : 0;
@@ -27,60 +30,35 @@ export class EloRanking {
     };
   }
 
-  recordComparison(winner: Name, loser: Name): [Name, Name] {
-    const winnerEloResult = this.updateEloRating(winner, loser, true);
-    const loserEloResult = this.updateEloRating(loser, winner, false);
+  /** Records a comparison where one name wins against multiple losers and returns all updated names. */
+  recordNComparisons(winner: Name, losers: Name[]): Name[] {
+    let totalWinnerRatingChange = 0;
+    const updatedLosers: Name[] = [];
 
-    const updatedWinner: Name = {
-      ...winner,
-      eloRating: winnerEloResult.newRating,
-      wins: winner.wins + 1,
-      comparisons: winner.comparisons + 1
-    };
+    for (const loser of losers) {
+      const winnerEloResult = this.updateEloRating(winner, loser, true);
+      const loserEloResult = this.updateEloRating(loser, winner, false);
 
-    const updatedLoser: Name = {
-      ...loser,
-      eloRating: loserEloResult.newRating,
-      losses: loser.losses + 1,
-      comparisons: loser.comparisons + 1
-    };
-
-    return [updatedWinner, updatedLoser];
-  }
-
-  recordThreeWayComparison(winner: Name, loser1: Name, loser2: Name): [Name, Name, Name] {
-    const winnerVsLoser1 = this.updateEloRating(winner, loser1, true);
-    const loser1VsWinner = this.updateEloRating(loser1, winner, false);
-
-    const winnerVsLoser2 = this.updateEloRating(winner, loser2, true);
-    const loser2VsWinner = this.updateEloRating(loser2, winner, false);
-
-    const totalWinnerRatingChange = winnerVsLoser1.ratingChange + winnerVsLoser2.ratingChange;
+      totalWinnerRatingChange += winnerEloResult.ratingChange;
+      updatedLosers.push({
+        ...loser,
+        eloRating: loserEloResult.newRating,
+        losses: loser.losses + 1,
+        comparisons: loser.comparisons + 1
+      });
+    }
 
     const updatedWinner: Name = {
       ...winner,
       eloRating: Math.round(winner.eloRating + totalWinnerRatingChange),
-      wins: winner.wins + 2,
-      comparisons: winner.comparisons + 2
+      wins: winner.wins + losers.length,
+      comparisons: winner.comparisons + losers.length
     };
 
-    const updatedLoser1: Name = {
-      ...loser1,
-      eloRating: loser1VsWinner.newRating,
-      losses: loser1.losses + 1,
-      comparisons: loser1.comparisons + 1
-    };
-
-    const updatedLoser2: Name = {
-      ...loser2,
-      eloRating: loser2VsWinner.newRating,
-      losses: loser2.losses + 1,
-      comparisons: loser2.comparisons + 1
-    };
-
-    return [updatedWinner, updatedLoser1, updatedLoser2];
+    return [updatedWinner, ...updatedLosers];
   }
 
+  /** Sorts names by ELO rating in descending order (highest rated first). */
   rankNames(names: Name[]): Name[] {
     return [...names].sort((a, b) => b.eloRating - a.eloRating);
   }
