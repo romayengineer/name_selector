@@ -4,7 +4,7 @@ A web application that generates unique business names using syllable combinatio
 
 ## Overview
 
-Name Selector generates phonetically diverse business names by combining consonants and vowels into 3-5 syllable words. You compare names two at a time, and the app ranks them using an ELO rating system to surface your top-rated names over time.
+Name Selector generates phonetically diverse business names by combining consonants and vowels into 3-5 syllable words. You compare names side-by-side (two or more at a time), and the app ranks them using an ELO rating system to surface your top-rated names over time.
 
 ## Screenshots
 
@@ -18,8 +18,9 @@ Name Selector generates phonetically diverse business names by combining consona
   - Generate batches of names on demand
   
 - **Interactive Comparison**: Click to compare and vote
-  - Two random names appear at a time
+  - Compare 2 or more names side-by-side
   - Click to select your preferred name
+  - N-way comparisons supported (winner beats all losers simultaneously)
   - See results immediately reflected in rankings
   
 - **ELO-based Ranking**: Names ranked by preference using ELO rating system
@@ -141,6 +142,12 @@ Where:
 
 **Initial Rating**: 1200 ELO (arbitrary starting point)
 
+**N-Way Comparisons**: When comparing more than 2 names:
+- Winner's rating is updated against each loser independently
+- All rating changes are calculated against baseline winner rating
+- Total rating change = sum of changes from all individual matchups
+- Winner gains 1 win and 1 comparison for each loser defeated
+
 ## Data Schema
 
 ### Generated Names (localStorage format)
@@ -181,6 +188,7 @@ Where:
 - [x] Build comparison UI (click-based)
 - [x] Build ranking table view
 - [x] Build generation controls
+- [x] N-way comparison support (2+ names)
 
 ### Phase 2: Input Methods
 - [ ] Add keyboard navigation (arrow keys)
@@ -243,7 +251,9 @@ npm run preview
 ## How to Use
 
 1. **Start**: App auto-generates initial batch of unique names
-2. **Compare**: Two random names appear side-by-side; click the one you prefer
+2. **Compare**: Multiple names appear side-by-side; click the one you prefer as the winner
+   - Two-way comparison: Choose your favorite of two names
+   - N-way comparison: Choose your favorite from multiple names (all others count as losses)
 3. **Track Progress**: See real-time statistics:
    - **Total names generated**: How many unique names created so far
    - **Total matches**: How many selections/clicks you've made
