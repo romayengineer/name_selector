@@ -8,17 +8,14 @@
 
   let showRankings = $state(false);
 
-  const totalMatches = $derived(Math.floor($names.reduce((sum: number, name: Name) => sum + name.comparisons, 0) / 2));
+  const totalMatches = $derived(Math.floor($names.reduce((sum: number, name: Name) => sum + name.comparisons, 0) / 4));
 
   onMount(() => {
     names.initializeApp();
   });
 
-  function handleSelect(winner: Name): void {
-    if ($currentComparison) {
-      const [name1, name2] = $currentComparison;
-      names.recordWin(winner.id === name1.id ? name1 : name2, winner.id === name1.id ? name2 : name1);
-    }
+  function handleSelect(winner: Name, loser1: Name, loser2: Name): void {
+    names.recordThreeWayWin(winner, loser1, loser2);
   }
 
   function handleGenerateMore(): void {
@@ -54,6 +51,7 @@
     <ComparisonView
       name1={$currentComparison?.[0]}
       name2={$currentComparison?.[1]}
+      name3={$currentComparison?.[2]}
       onSelect={handleSelect}
     />
   {/if}

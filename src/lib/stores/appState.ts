@@ -68,20 +68,46 @@ function createAppState() {
     });
   };
 
+  const recordThreeWayWin = (winner: Name, loser1: Name, loser2: Name): void => {
+    update((names: Name[]) => {
+      const [updatedWinner, updatedLoser1, updatedLoser2] = eloRanking.recordThreeWayComparison(
+        winner,
+        loser1,
+        loser2
+      );
+
+      const updatedNames = names.map((n: Name) => {
+        if (n.id === updatedWinner.id) return updatedWinner;
+        if (n.id === updatedLoser1.id) return updatedLoser1;
+        if (n.id === updatedLoser2.id) return updatedLoser2;
+        return n;
+      });
+
+      let currentNameSet: Set<string> = new Set();
+      generatedNameSet.subscribe((s) => {
+        currentNameSet = s;
+      })();
+
+      saveData(updatedNames, currentNameSet);
+      return updatedNames;
+    });
+  };
+
   return {
     subscribe,
     initializeApp,
     generateMoreNames,
-    recordWin
+    recordWin,
+    recordThreeWayWin
   };
 }
 
 export const names = createAppState();
 
 export const currentComparison = derived(names, (n: Name[]) => {
-  if (n.length < 2) return null;
-  const pair = nameGenerator.getRandomNames(n, 2);
-  return pair as [Name, Name];
+  if (n.length < 3) return null;
+  const trio = nameGenerator.getRandomNames(n, 3);
+  return trio as [Name, Name, Name];
 });
 
 export const rankings = derived(names, (n: Name[]) => {

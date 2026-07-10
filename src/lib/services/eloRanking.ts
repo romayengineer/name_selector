@@ -48,6 +48,39 @@ export class EloRanking {
     return [updatedWinner, updatedLoser];
   }
 
+  recordThreeWayComparison(winner: Name, loser1: Name, loser2: Name): [Name, Name, Name] {
+    const winnerVsLoser1 = this.updateEloRating(winner, loser1, true);
+    const loser1VsWinner = this.updateEloRating(loser1, winner, false);
+
+    const winnerVsLoser2 = this.updateEloRating(winner, loser2, true);
+    const loser2VsWinner = this.updateEloRating(loser2, winner, false);
+
+    const totalWinnerRatingChange = winnerVsLoser1.ratingChange + winnerVsLoser2.ratingChange;
+
+    const updatedWinner: Name = {
+      ...winner,
+      eloRating: Math.round(winner.eloRating + totalWinnerRatingChange),
+      wins: winner.wins + 2,
+      comparisons: winner.comparisons + 2
+    };
+
+    const updatedLoser1: Name = {
+      ...loser1,
+      eloRating: loser1VsWinner.newRating,
+      losses: loser1.losses + 1,
+      comparisons: loser1.comparisons + 1
+    };
+
+    const updatedLoser2: Name = {
+      ...loser2,
+      eloRating: loser2VsWinner.newRating,
+      losses: loser2.losses + 1,
+      comparisons: loser2.comparisons + 1
+    };
+
+    return [updatedWinner, updatedLoser1, updatedLoser2];
+  }
+
   rankNames(names: Name[]): Name[] {
     return [...names].sort((a, b) => b.eloRating - a.eloRating);
   }
