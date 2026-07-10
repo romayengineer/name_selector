@@ -1,7 +1,7 @@
 import { writable, derived } from 'svelte/store';
 import type { Name } from '$lib/types/index';
 import { NameGenerator } from '$lib/services/nameGenerator';
-import { recordComparison, rankNames } from '$lib/services/eloRanking';
+import { EloRanking } from '$lib/services/eloRanking';
 import { loadData, saveData } from '$lib/services/storage';
 
 const newNamesCounter = 20
@@ -9,6 +9,10 @@ const newNamesCounter = 20
 const nameGenerator = new NameGenerator({
   minSyllables: 3,
   maxSyllables: 3,
+});
+
+const eloRanking = new EloRanking({
+  kFactor: 32
 });
 
 function createAppState() {
@@ -46,7 +50,7 @@ function createAppState() {
 
   const recordWin = (winner: Name, loser: Name): void => {
     update((names: Name[]) => {
-      const [updatedWinner, updatedLoser] = recordComparison(winner, loser);
+      const [updatedWinner, updatedLoser] = eloRanking.recordComparison(winner, loser);
 
       const updatedNames = names.map((n: Name) => {
         if (n.id === updatedWinner.id) return updatedWinner;
@@ -81,5 +85,5 @@ export const currentComparison = derived(names, (n: Name[]) => {
 });
 
 export const rankings = derived(names, (n: Name[]) => {
-  return rankNames(n);
+  return eloRanking.rankNames(n);
 });

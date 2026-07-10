@@ -1,44 +1,54 @@
 import type { Name, EloResult } from '$lib/types/index';
 
-const K_FACTOR = 32;
-
-function getExpectedScore(ratingA: number, ratingB: number): number {
-  return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
+interface EloRankingConfig {
+  kFactor?: number;
 }
 
-export function updateEloRating(name: Name, opponent: Name, won: boolean): EloResult {
-  const expectedScore = getExpectedScore(name.eloRating, opponent.eloRating);
-  const actual = won ? 1 : 0;
-  const ratingChange = K_FACTOR * (actual - expectedScore);
-  const newRating = name.eloRating + ratingChange;
+export class EloRanking {
+  private kFactor: number;
 
-  return {
-    newRating: Math.round(newRating),
-    ratingChange: Math.round(ratingChange)
-  };
-}
+  constructor(config?: EloRankingConfig) {
+    this.kFactor = config?.kFactor ?? 32;
+  }
 
-export function recordComparison(winner: Name, loser: Name): [Name, Name] {
-  const winnerEloResult = updateEloRating(winner, loser, true);
-  const loserEloResult = updateEloRating(loser, winner, false);
+  private getExpectedScore(ratingA: number, ratingB: number): number {
+    return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
+  }
 
-  const updatedWinner: Name = {
-    ...winner,
-    eloRating: winnerEloResult.newRating,
-    wins: winner.wins + 1,
-    comparisons: winner.comparisons + 1
-  };
+  updateEloRating(name: Name, opponent: Name, won: boolean): EloResult {
+    const expectedScore = this.getExpectedScore(name.eloRating, opponent.eloRating);
+    const actual = won ? 1 : 0;
+    const ratingChange = this.kFactor * (actual - expectedScore);
+    const newRating = name.eloRating + ratingChange;
 
-  const updatedLoser: Name = {
-    ...loser,
-    eloRating: loserEloResult.newRating,
-    losses: loser.losses + 1,
-    comparisons: loser.comparisons + 1
-  };
+    return {
+      newRating: Math.round(newRating),
+      ratingChange: Math.round(ratingChange)
+    };
+  }
 
-  return [updatedWinner, updatedLoser];
-}
+  recordComparison(winner: Name, loser: Name): [Name, Name] {
+    const winnerEloResult = this.updateEloRating(winner, loser, true);
+    const loserEloResult = this.updateEloRating(loser, winner, false);
 
-export function rankNames(names: Name[]): Name[] {
-  return [...names].sort((a, b) => b.eloRating - a.eloRating);
+    const updatedWinner: Name = {
+      ...winner,
+      eloRating: winnerEloResult.newRating,
+      wins: winner.wins + 1,
+      comparisons: winner.comparisons + 1
+    };
+
+    const updatedLoser: Name = {
+      ...loser,
+      eloRating: loserEloResult.newRating,
+      losses: loser.losses + 1,
+      comparisons: loser.comparisons + 1
+    };
+
+    return [updatedWinner, updatedLoser];
+  }
+
+  rankNames(names: Name[]): Name[] {
+    return [...names].sort((a, b) => b.eloRating - a.eloRating);
+  }
 }
