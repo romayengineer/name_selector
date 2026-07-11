@@ -1,7 +1,7 @@
 import { writable, derived } from 'svelte/store';
 import type { Name } from '$lib/types/index';
 import { NameGenerator } from '$lib/services/nameGenerator';
-import { EloRanking } from '$lib/services/eloRanking';
+import { eloDescending, EloRanking } from '$lib/services/eloRanking';
 import { loadData, saveData } from '$lib/services/storage';
 
 const newNamesCounter = 20
@@ -41,7 +41,7 @@ function createAppState() {
       })();
 
       const newNames = nameGenerator.generateNames(newNamesCounter, currentNameSet);
-      const allNames = [...names, ...newNames];
+      const allNames = eloDescending([...names, ...newNames]);
       generatedNameSet.set(currentNameSet);
       saveData(allNames, currentNameSet);
       return allNames;
@@ -60,6 +60,8 @@ function createAppState() {
         if (index < 0) return;
         updatedNames[index] = updatedName;
       })
+
+      updatedNames = eloDescending(updatedNames)
 
       let currentNameSet: Set<string> = new Set();
       generatedNameSet.subscribe((s) => {

@@ -1,4 +1,5 @@
 import type { Name } from '$lib/types/index';
+import { eloDescending } from './eloRanking';
 
 const STORAGE_KEY = 'name_selector_data';
 
@@ -21,7 +22,7 @@ export function loadData(): { names: Name[]; generatedNameSet: Set<string> } {
   try {
     const data: StorageData = JSON.parse(stored);
     return {
-      names: data.names,
+      names: eloDescending(data.names),
       generatedNameSet: new Set(data.generatedNameSet)
     };
   } catch {
@@ -35,7 +36,7 @@ export function saveData(names: Name[], generatedNameSet: Set<string>): void {
   }
 
   const data: StorageData = {
-    names,
+    names: eloDescending(names),
     generatedNameSet: Array.from(generatedNameSet)
   };
 

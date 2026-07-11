@@ -4,6 +4,11 @@ interface EloRankingConfig {
   kFactor?: number;
 }
 
+/** Sorts names by ELO rating in descending order (highest rated first). */
+export function eloDescending(names: Name[]): Name[] {
+  return [...names].sort((a, b) => b.eloRating - a.eloRating);
+}
+
 export class EloRanking {
   private kFactor: number;
 
