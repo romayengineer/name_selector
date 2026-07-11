@@ -123,6 +123,12 @@ const pair = generator.getRandomNames(names, 2);
 
 **Uniqueness**: Generated names are tracked in a `Set<string>` to prevent duplicates.
 
+**Smart Comparison Selection**: When selecting names for comparison, the app uses a sliding window approach:
+- Picks a random starting position in the sorted name list
+- Creates a window of nearby names (size = 5 × comparison count)
+- Selects random names from within this window
+- Result: Comparisons are between names with similar ELO ratings, providing meaningful choices and preventing mismatches between very strong and very weak names
+
 ### ELO Ranking
 
 The ELO system adjusts ratings after each comparison based on:
