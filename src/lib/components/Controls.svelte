@@ -2,10 +2,10 @@
   interface Props {
     onGenerateMore: () => void;
     totalNames?: number;
-    totalMatches?: number;
+    totalWins?: number;
   }
 
-  const { onGenerateMore, totalNames = 0, totalMatches = 0 }: Props = $props();
+  const { onGenerateMore, totalNames = 0, totalWins = 0 }: Props = $props();
 
   let isGenerating = $state(false);
 
@@ -22,7 +22,7 @@
       Total names generated: <span class="font-semibold text-slate-900">{totalNames}</span>
     </div>
     <div>
-      Total matches: <span class="font-semibold text-slate-900">{totalMatches}</span>
+      Total wins: <span class="font-semibold text-slate-900">{totalWins}</span>
     </div>
   </div>
 

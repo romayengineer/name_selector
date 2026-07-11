@@ -6,7 +6,7 @@
     maxRows?: number;
   }
 
-  const { rankings = [], maxRows = 10 }: Props = $props();
+  const { rankings = [], maxRows = 20 }: Props = $props();
 
   const displayedRankings = $derived(rankings.slice(0, maxRows));
 
@@ -25,27 +25,27 @@
     <table class="w-full">
       <thead class="bg-slate-50 border-b border-slate-200">
         <tr>
-          <th class="px-6 py-3 text-left text-sm font-semibold text-slate-700">#</th>
-          <th class="px-6 py-3 text-left text-sm font-semibold text-slate-700">Name</th>
-          <th class="px-6 py-3 text-right text-sm font-semibold text-slate-700">ELO Rating</th>
-          <th class="px-6 py-3 text-right text-sm font-semibold text-slate-700">Wins</th>
-          <th class="px-6 py-3 text-right text-sm font-semibold text-slate-700">Losses</th>
-          <th class="px-6 py-3 text-right text-sm font-semibold text-slate-700">Win Rate</th>
-          <th class="px-6 py-3 text-right text-sm font-semibold text-slate-700">Total</th>
+          <th class="px-6 py-3 text-left text-base font-semibold text-slate-700">#</th>
+          <th class="px-6 py-3 text-left text-base font-semibold text-slate-700">Name</th>
+          <th class="px-6 py-3 text-right text-base font-semibold text-slate-700">ELO Rating</th>
+          <th class="px-6 py-3 text-right text-base font-semibold text-slate-700">Wins</th>
+          <th class="px-6 py-3 text-right text-base font-semibold text-slate-700">Losses</th>
+          <th class="px-6 py-3 text-right text-base font-semibold text-slate-700">Win Rate</th>
+          <th class="px-6 py-3 text-right text-base font-semibold text-slate-700">Total</th>
         </tr>
       </thead>
       <tbody>
         {#each displayedRankings as name, index (name.id)}
           <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-            <td class="px-6 py-4 text-sm font-semibold text-slate-900">{index + 1}</td>
-            <td class="px-6 py-4 text-sm font-medium text-slate-900">{name.text}</td>
-            <td class="px-6 py-4 text-sm text-right text-slate-900 font-semibold">{name.eloRating}</td>
-            <td class="px-6 py-4 text-sm text-right text-green-600 font-medium">{name.wins}</td>
-            <td class="px-6 py-4 text-sm text-right text-red-600 font-medium">{name.losses}</td>
-            <td class="px-6 py-4 text-sm text-right text-slate-600">
+            <td class="px-6 py-4 text-base font-semibold text-slate-900">{index + 1}</td>
+            <td class="px-6 py-4 text-base font-medium text-slate-900">{name.text}</td>
+            <td class="px-6 py-4 text-base text-right text-slate-900 font-semibold">{name.eloRating}</td>
+            <td class="px-6 py-4 text-base text-right text-green-600 font-medium">{name.wins}</td>
+            <td class="px-6 py-4 text-base text-right text-red-600 font-medium">{name.losses}</td>
+            <td class="px-6 py-4 text-base text-right text-slate-600">
               {getWinRate(name.wins, name.comparisons)}
             </td>
-            <td class="px-6 py-4 text-sm text-right text-slate-600">{name.comparisons}</td>
+            <td class="px-6 py-4 text-base text-right text-slate-600">{name.comparisons}</td>
           </tr>
         {/each}
       </tbody>

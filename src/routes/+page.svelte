@@ -8,7 +8,7 @@
 
   let showRankings = $state(false);
 
-  const totalMatches = $derived(Math.floor($names.reduce((sum: number, name: Name) => sum + name.wins, 0)));
+  const totalWins = $derived(Math.floor($names.reduce((sum: number, name: Name) => sum + name.wins, 0)));
 
   onMount(() => {
     names.initializeApp();
@@ -52,5 +52,5 @@
     </button>
   </div>
 
-  <Controls onGenerateMore={handleGenerateMore} totalNames={$names.length} totalMatches={totalMatches} />
+  <Controls onGenerateMore={handleGenerateMore} totalNames={$names.length} totalWins={totalWins} />
 </div>

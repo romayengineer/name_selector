@@ -48,7 +48,7 @@
 <div class="flex flex-col gap-8">
   <h2 class="text-2xl font-semibold text-center text-slate-700">Which name do you prefer?</h2>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     {#each names as name, index (name.id)}
       <button
         onclick={() => name && handleClick(name)}
@@ -56,7 +56,7 @@
           ? 'ring-4 ring-blue-500 bg-blue-50'
           : 'bg-white hover:shadow-lg'} shadow-md"
       >
-        <div class="text-5xl font-bold text-slate-900 mb-4">{name?.text || ''}</div>
+        <div class="text-4xl font-bold text-slate-900">{name?.text || ''}</div>
       </button>
     {/each}
   </div>
