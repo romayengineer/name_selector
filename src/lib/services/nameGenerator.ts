@@ -42,6 +42,28 @@ export class NameGenerator {
   }
 
   /**
+   * Generates a random integer in [0, max) with a bias toward 0 (low indices).
+   *
+   * How it works:
+   * - `Math.random()` returns a uniform value in [0, 1).
+   * - Raising it to a power > 1 (here `^2`) reshapes the distribution so that
+   *   small values become far more likely than values near 1. For example,
+   *   with exponent 2, ~57% of samples fall below 0.5, while only ~17% fall
+   *   above 0.8. Increasing the exponent makes the bias toward 0 stronger.
+   * - After applying the exponent, the result is scaled by `max` and floored
+   *   to produce an integer index.
+   *
+   * Use this when you want low indices to be favored (e.g., picking from the
+   * top of a sorted list more often) rather than uniformly random selection.
+   *
+   * @param max Exclusive upper bound on the returned index
+   * @returns Integer in [0, max), biased toward 0
+   */
+  private getBiasedRandomIndex(max: number): number {
+    return Math.floor(Math.pow(Math.random(), 2) * max);
+  }
+
+  /**
    * Generates a single syllable (consonant + vowel).
    */
   private generateSyllable(): string {
@@ -101,7 +123,19 @@ export class NameGenerator {
 
   /**
    * Selects random names from a window of nearby names to provide meaningful comparisons.
-   * @param names Array of all names to select from
+   *
+   * How it works:
+   * - Assumes `names` is sorted by ELO rating in descending order (index 0 = highest rated).
+   * - Picks a window of `windowSize` consecutive names to compare against each other.
+   * - The window's starting index is generated via `getBiasedRandomIndex`, which
+   *   biases toward 0. This means windows starting near the top of the list
+   *   (i.e. containing names with higher ELO ratings) are selected more often
+   *   than windows further down, giving top-ranked names more opportunities
+   *   to be compared and separated.
+   * - Within the chosen window, `count` unique names are picked uniformly at random.
+   * - The selected names are then shuffled so their presentation order is random.
+   *
+   * @param names Array of all names to select from (expected to be sorted by ELO desc)
    * @param count Number of names to select (default: 2)
    * @returns Array of selected names from the same window
    */
@@ -112,7 +146,7 @@ export class NameGenerator {
 
     const windowSize = Math.min(5 * count, names.length);
     const maxWindowIndex = names.length - windowSize + 1;
-    const randomIndex = Math.floor(Math.random() * maxWindowIndex);
+    const randomIndex = this.getBiasedRandomIndex(maxWindowIndex);
     const namesWindow = names.slice(randomIndex, randomIndex + windowSize);
 
     const selected: Name[] = [];
