@@ -122,6 +122,33 @@ export class NameGenerator {
   }
 
   /**
+   * Builds a window of `windowSize` consecutive names from the sorted list.
+   *
+   * How it works:
+   * - Assumes `names` is sorted by ELO rating in descending order (index 0 = highest rated).
+   * - The window size is `min(5 * count, names.length)`, scaling with how many names
+   *   the caller intends to pick so the candidate pool is large enough to provide
+   *   meaningful comparisons without spanning the entire list.
+   * - The window's starting index is drawn from `getBiasedRandomIndex`, which
+   *   biases toward 0. As a result, windows near the top of the list
+   *   (i.e. containing names with higher ELO ratings) are selected more often
+   *   than windows further down, giving top-ranked names more opportunities
+   *   to be compared and separated.
+   *
+   * @param names Array of all names to select from (expected to be sorted by ELO desc)
+   * @param count Number of names the caller intends to pick from the window;
+   *              influences the window size (`5 * count`)
+   * @returns Slice of `names` representing the selected window
+   */
+  public getNamesWindow(names: Name[], count: number): Name[] {
+    const windowSize = Math.min(5 * count, names.length);
+    const maxWindowIndex = names.length - windowSize + 1;
+    const randomIndex = this.getBiasedRandomIndex(maxWindowIndex);
+    const namesWindow = names.slice(randomIndex, randomIndex + windowSize);
+    return namesWindow;
+  }
+
+  /**
    * Selects random names from a window of nearby names to provide meaningful comparisons.
    *
    * How it works:
@@ -144,10 +171,7 @@ export class NameGenerator {
       return names;
     }
 
-    const windowSize = Math.min(5 * count, names.length);
-    const maxWindowIndex = names.length - windowSize + 1;
-    const randomIndex = this.getBiasedRandomIndex(maxWindowIndex);
-    const namesWindow = names.slice(randomIndex, randomIndex + windowSize);
+    const namesWindow = this.getNamesWindow(names, count)
 
     const selected: Name[] = [];
     const indices = new Set<number>();
