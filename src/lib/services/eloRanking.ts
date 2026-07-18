@@ -9,6 +9,16 @@ export function eloDescending(names: Name[]): Name[] {
   return [...names].sort((a, b) => b.eloRating - a.eloRating);
 }
 
+/** Randomly shuffles an array of names using the Fisher-Yates algorithm. */
+export function shuffleNames(names: Name[]): Name[] {
+  const shuffled = [...names];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 export class EloRanking {
   private kFactor: number;
 

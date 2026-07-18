@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { Name } from '$lib/types/index';
-import { eloDescending } from './eloRanking';
+import { shuffleNames } from './eloRanking';
 
 interface NameGeneratorConfig {
   consonants?: string[];
@@ -126,6 +126,6 @@ export class NameGenerator {
       }
     }
 
-    return eloDescending(selected);
+    return shuffleNames(selected);
   }
 }
