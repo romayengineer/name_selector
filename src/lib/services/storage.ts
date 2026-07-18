@@ -50,3 +50,27 @@ export function clearData(): void {
 
   localStorage.removeItem(STORAGE_KEY);
 }
+
+export function downloadData(): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const json = localStorage.getItem(STORAGE_KEY) ?? JSON.stringify({
+    names: [],
+    generatedNameSet: []
+  });
+
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const date = new Date().toISOString().split('T')[0];
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `name_selector_data_${date}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+}

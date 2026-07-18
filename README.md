@@ -44,6 +44,11 @@ Name Selector generates phonetically diverse business names by combining consona
   - Win rate percentage
   - Total matches (comparisons) for each name
 
+- **Export Data**: Download the full localStorage snapshot as a single JSON file
+  - Filename: `name_selector_data_YYYY-MM-DD.json`
+  - Includes all names (with ELO ratings, win/loss records, comparisons) and the generated-name set
+  - Round-trips with the storage format (safe to re-import manually if you wire that up later)
+
 ## Tech Stack
 
 - **Frontend Framework**: SvelteKit 2.61+ with Svelte 5.55+
@@ -202,7 +207,7 @@ Where:
 
 ### Phase 3: Polish
 - [ ] Add name filtering/search
-- [ ] Export generated names
+- [x] Export generated names
 - [ ] Settings (K-factor adjustment, reset data)
 - [ ] Dark mode
 
@@ -265,7 +270,8 @@ npm run preview
    - **Total matches**: How many selections/clicks you've made
 4. **View Rankings**: Switch to Rankings tab to see names sorted by ELO rating
 5. **Generate More**: Hit "Generate More Names" to expand the pool
-6. **Repeat**: Keep comparing to find your favorite names
+6. **Export**: Hit "Download JSON" to save a snapshot of your current names, ELO ratings, and generated-name set to a date-stamped file
+7. **Repeat**: Keep comparing to find your favorite names
 
 The more you compare, the more accurate the rankings become. Popular names rise to the top!
 

@@ -1,11 +1,12 @@
 <script lang="ts">
   interface Props {
     onGenerateMore: () => void;
+    onDownloadJson?: () => void;
     totalNames?: number;
     totalWins?: number;
   }
 
-  const { onGenerateMore, totalNames = 0, totalWins = 0 }: Props = $props();
+  const { onGenerateMore, onDownloadJson, totalNames = 0, totalWins = 0 }: Props = $props();
 
   let isGenerating = $state(false);
 
@@ -26,11 +27,21 @@
     </div>
   </div>
 
-  <button
-    onclick={handleGenerateMore}
-    disabled={isGenerating}
-    class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-slate-400 transition-colors"
-  >
-    {isGenerating ? 'Generating...' : 'Generate More Names'}
-  </button>
+  <div class="flex gap-2">
+    {#if onDownloadJson}
+      <button
+        onclick={onDownloadJson}
+        class="px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors"
+      >
+        Download JSON
+      </button>
+    {/if}
+    <button
+      onclick={handleGenerateMore}
+      disabled={isGenerating}
+      class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-slate-400 transition-colors"
+    >
+      {isGenerating ? 'Generating...' : 'Generate More Names'}
+    </button>
+  </div>
 </div>

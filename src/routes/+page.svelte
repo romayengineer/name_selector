@@ -5,6 +5,7 @@
   import RankingTable from '$lib/components/RankingTable.svelte';
   import Controls from '$lib/components/Controls.svelte';
   import { names, getCurrentComparison, rankings } from '$lib/stores/appState';
+  import { downloadData } from '$lib/services/storage';
 
   let showRankings = $state(false);
 
@@ -22,6 +23,10 @@
 
   function handleGenerateMore(): void {
     names.generateMoreNames();
+  }
+
+  function handleDownloadJson(): void {
+    downloadData();
   }
 </script>
 
@@ -54,5 +59,5 @@
     </button>
   </div>
 
-  <Controls onGenerateMore={handleGenerateMore} totalNames={$names.length} totalWins={totalWins} />
+  <Controls onGenerateMore={handleGenerateMore} onDownloadJson={handleDownloadJson} totalNames={$names.length} totalWins={totalWins} />
 </div>
