@@ -149,40 +149,64 @@ export class NameGenerator {
   }
 
   /**
-   * Selects random names from a window of nearby names to provide meaningful comparisons.
+   * Selects up to `count` names from `names`, favoring those with fewer comparisons.
+   *
+   * How it works:
+   * - Sorts `names` by `Name.comparisons` ascending so that least-compared
+   *   names occupy the lowest indices.
+   * - Uses `getBiasedRandomIndex` to draw indices into the sorted array.
+   *   Because the bias is toward 0, names at the front of the sorted list
+   *   (i.e. those that have been compared the fewest times) are picked more
+   *   often than those at the back.
+   * - Tracks already-picked indices so each returned name is unique.
+   *
+   * @param names Candidate pool to select from
+   * @param count Maximum number of names to return
+   * @returns Array of selected names, biased toward less-compared entries
+   */
+  public selectNamesWithLessMatches(names: Name[], count: number): Name[] {
+    const sorted = [...names].sort((a, b) => a.comparisons - b.comparisons);
+    const selected: Name[] = [];
+    const indices = new Set<number>();
+
+    while (selected.length < count && selected.length < sorted.length) {
+      const windowIndex = this.getBiasedRandomIndex(sorted.length);
+      if (!indices.has(windowIndex)) {
+        indices.add(windowIndex);
+        selected.push(sorted[windowIndex]);
+      }
+    }
+
+    return selected;
+  }
+
+  /**
+   * Selects names for the next comparison round, encouraging top-ranked names
+   * and under-compared names to appear more often.
    *
    * How it works:
    * - Assumes `names` is sorted by ELO rating in descending order (index 0 = highest rated).
-   * - Picks a window of `windowSize` consecutive names to compare against each other.
-   * - The window's starting index is generated via `getBiasedRandomIndex`, which
-   *   biases toward 0. This means windows starting near the top of the list
-   *   (i.e. containing names with higher ELO ratings) are selected more often
-   *   than windows further down, giving top-ranked names more opportunities
-   *   to be compared and separated.
-   * - Within the chosen window, `count` unique names are picked uniformly at random.
-   * - The selected names are then shuffled so their presentation order is random.
+   * - Delegates to `getNamesWindow` to build a window of nearby names. Because
+   *   the window's starting index is biased toward 0, windows containing
+   *   higher-rated names are chosen more often, giving top-ranked names more
+   *   chances to be compared and separated.
+   * - Delegates to `selectNamesWithLessMatches` to pick `count` unique names
+   *   from the window. Names that have been compared fewer times are favored,
+   *   avoiding over-reliance on the same candidates every round.
+   * - The selected names are finally shuffled so their presentation order
+   *   carries no signal about ranking or comparison history.
    *
    * @param names Array of all names to select from (expected to be sorted by ELO desc)
    * @param count Number of names to select (default: 2)
-   * @returns Array of selected names from the same window
+   * @returns Array of selected names for the next comparison
    */
   public getRandomNames(names: Name[], count: number = 2): Name[] {
     if (names.length < count) {
       return names;
     }
 
-    const namesWindow = this.getNamesWindow(names, count)
-
-    const selected: Name[] = [];
-    const indices = new Set<number>();
-
-    while (selected.length < count) {
-      const windowIndex = Math.floor(Math.random() * namesWindow.length);
-      if (!indices.has(windowIndex)) {
-        indices.add(windowIndex);
-        selected.push(namesWindow[windowIndex]);
-      }
-    }
+    const namesWindow = this.getNamesWindow(names, count);
+    const selected = this.selectNamesWithLessMatches(namesWindow, count);
 
     return shuffleNames(selected);
   }
