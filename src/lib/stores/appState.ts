@@ -1,4 +1,4 @@
-import { writable, derived } from 'svelte/store';
+import { writable, derived, type Readable } from 'svelte/store';
 import type { Name } from '$lib/types/index';
 import { NameGenerator } from '$lib/services/nameGenerator';
 import { eloDescending, EloRanking } from '$lib/services/eloRanking';
@@ -83,10 +83,12 @@ function createAppState() {
 
 export const names = createAppState();
 
-export const currentComparison = derived(names, (n: Name[]) => {
-  const trio = nameGenerator.getRandomNames(n, 2 * 7);
-  return trio as Name[];
-});
+export function getCurrentComparison(count: number): Readable<Name[]> {
+  return derived(names, (n: Name[]) => {
+    const trio = nameGenerator.getRandomNames(n, count);
+    return trio as Name[];
+  });
+}
 
 export const rankings = derived(names, (n: Name[]) => {
   return eloRanking.rankNames(n);

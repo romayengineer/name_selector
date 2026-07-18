@@ -4,9 +4,11 @@
   import ComparisonView from '$lib/components/ComparisonView.svelte';
   import RankingTable from '$lib/components/RankingTable.svelte';
   import Controls from '$lib/components/Controls.svelte';
-  import { names, currentComparison, rankings } from '$lib/stores/appState';
+  import { names, getCurrentComparison, rankings } from '$lib/stores/appState';
 
   let showRankings = $state(false);
+
+  let currentComparison = getCurrentComparison(7);
 
   const totalWins = $derived(Math.floor($names.reduce((sum: number, name: Name) => sum + name.wins, 0)));
 

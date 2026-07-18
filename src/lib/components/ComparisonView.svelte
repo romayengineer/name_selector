@@ -48,7 +48,7 @@
 <div class="flex flex-col gap-4">
   <h2 class="text-2xl font-semibold text-center text-slate-700">Which name do you prefer?</h2>
 
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
     {#each names as name, index (name.id)}
       <button
         onclick={() => name && handleClick(name)}
