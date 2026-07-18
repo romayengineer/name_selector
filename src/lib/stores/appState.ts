@@ -84,7 +84,7 @@ function createAppState() {
 export const names = createAppState();
 
 export const currentComparison = derived(names, (n: Name[]) => {
-  const trio = nameGenerator.getRandomNames(n, 5);
+  const trio = nameGenerator.getRandomNames(n, 2 * 7);
   return trio as Name[];
 });
 
